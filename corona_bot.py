@@ -7,6 +7,7 @@ import telegram.ext
 import pickle
 import logging
 import const
+import data_manager
 
 
 # --- Functions --- #
@@ -16,10 +17,11 @@ def choose_question(update, context):
     """
     # Set up short vars
     bot = context.bot
-    choice = update.message.text
     chat_id = update.effective_user.id
+    choice = update.message.text
 
     # Store choice
+    context.user_data["question"] = choice
 
     # Understand what question was chosen
     if choice == "Pro 1000 Einwohner":
@@ -54,8 +56,10 @@ def choose_category(update, context):
     bot = context.bot
     chat_id = update.effective_user.id
     text = "Wähle jetzt Länder, die du vergleichen willst"
+    choice = update.message.text
 
     # Store choice
+    context.user_data["category"] = choice
 
     # Reply to user
     keyboard = const.remove_keyboard
@@ -66,14 +70,60 @@ def choose_countries(update, context):
     # Short vars
     bot = context.bot
     chat_id = update.effective_user.id
-    text1 = "Danke! Hier sind deine Daten:"
-    text2 = "Wähle gerne eine nächste Frage aus"
-    keyboard = const.question_keyboard
+    choice = update.message.text
+    country = const.format_country(choice)
 
-    # Reply to user
-    bot.send_message(chat_id=chat_id, text=text1)
-    bot.send_message(chat_id=chat_id, text=text2, reply_markup=keyboard)
-    return const.States.CHOOSE_QUESTION
+    if choice == "Zurück":
+        text = "Was willst du wissen?"
+        keyboard = const.question_keyboard
+        bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard)
+
+    elif choice == "Andere Länder":
+        print("WIP")
+
+    elif choice == "Bestätigen":
+        # Send data
+        question = context.user_data["question"]
+        if "category" in context.user_data:
+            category = context.user_data["category"]
+        countries = context.user_data["countries"]
+        photos = []
+
+        if question == "Pro 1000 Einwohner":
+            photos = [data_manager.per_population(category=category, countries=countries)]
+
+        elif question == "Ab 100. Fall":
+            photos = [data_manager.since_outbreak(category=category, countries=countries)]
+
+        elif question == "Corona / durchschnittliche Tote":
+            photos = data_manager.compare_deaths(countries=countries)
+
+        # Reply to user
+        text = "Hier sind deine Daten:"
+        bot.send_message(chat_id=chat_id, text=text)
+
+        for photo in photos:
+            bot.send_photo(chat_id=chat_id, photo=photo)
+
+        text = "Was willst du wissen?"
+        keyboard = const.question_keyboard
+        bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard)
+        
+        return const.States.CHOOSE_QUESTION
+
+    elif country != "":
+        # keep asking until done
+        context.user_data["countries"].append(country)
+        text = "Danke! Was sind weitere Länder, die du vergleichen willst?"
+        bot.send_message(chat_id=chat_id, text=text)
+
+        return const.States.CHOOSE_COUNTRIES
+
+    else:
+        text = "Das verstehe ich nicht. Bitte sende mir nur einzelne Flaggen."
+        bot.send_message(chat_id=chat_id, text=text)
+
+        return const.States.CHOOSE_COUNTRIES
 
 def cancel(update, context):
     # Short vars
@@ -87,6 +137,8 @@ def cancel(update, context):
     return const.States.CHOOSE_QUESTION
 
 def start(update, context):
+    context.user_data["countries"] = []
+
     keyboard = const.question_keyboard
     context.bot.send_message(chat_id=update.effective_user.id, text="Willkommen! Ich bin der CoronaBot. Klick dich gerne durch meine Menüs.", reply_markup=keyboard)
 

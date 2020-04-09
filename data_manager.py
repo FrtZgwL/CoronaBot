@@ -13,7 +13,8 @@ def per_population(**kwargs):
     category -- "dead", "cured", "infected" or "active".
     countries -- List with country names. For example ["Germany", "Italy", "USA"]
     """
-    print("WIP")
+    print(kwargs)
+    return(open("isaac-smith-6EnTPvPPL6I-unsplash.jpg", "rb"))
 
 def since_outbreak(**kwargs):
     """Returns a saved image that plots numbers about the corona crisis from different countries per day since the day they reached 100 cases.
@@ -22,7 +23,8 @@ def since_outbreak(**kwargs):
     category -- "dead", "cured", "infected" or "active".
     countries -- List with country names. For example ["Germany", "Italy", "USA"]
     """
-    print("WIP")
+    print(kwargs)
+    return(open("isaac-smith-6EnTPvPPL6I-unsplash.jpg", "rb"))
 
 def compare_deaths(**kwargs):
     """Returns a list of saved images that show a cake-diagram that compares corona deaths with all other deaths. 
@@ -32,6 +34,10 @@ def compare_deaths(**kwargs):
     Keyword arguments:
     countries -- List with country names. For example ["Germany", "Italy", "USA"]
     """
-    print("WIP")
+    print(kwargs)
+    photos = []
+    for i in range(len(kwargs)):
+        photos.append(open("isaac-smith-6EnTPvPPL6I-unsplash.jpg", "rb"))
+    return(photos)
 
 
