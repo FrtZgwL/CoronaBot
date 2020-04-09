@@ -18,6 +18,7 @@ def choose_question(update, context):
     bot = context.bot
     choice = update.message.text
     chat_id = update.effective_user.id
+##hallo##
 
     # Store choice
 
