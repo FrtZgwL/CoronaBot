@@ -55,16 +55,24 @@ def choose_category(update, context):
     # Short vars
     bot = context.bot
     chat_id = update.effective_user.id
-    text = "Wähle jetzt Länder, die du vergleichen willst"
     choice = update.message.text
 
-    # Store choice
-    context.user_data["category"] = choice
+    if choice == "Zurück":
+        keyboard = const.question_keyboard
+        text = "Was willst du wissen?"
+        bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard)
 
-    # Reply to user
-    keyboard = const.remove_keyboard
-    bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard)
-    return const.States.CHOOSE_COUNTRIES
+        return const.States.CHOOSE_QUESTION
+    else:
+        # Store choice
+        context.user_data["category"] = choice
+
+        # Reply to user
+        keyboard = const.remove_keyboard
+        text = "Wähle jetzt Länder, die du vergleichen willst"
+        bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard)
+
+        return const.States.CHOOSE_COUNTRIES
 
 def choose_countries(update, context):
     # Short vars
@@ -77,6 +85,8 @@ def choose_countries(update, context):
         text = "Was willst du wissen?"
         keyboard = const.question_keyboard
         bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard)
+
+        return const.States.CHOOSE_QUESTION
 
     elif choice == "Andere Länder":
         print("WIP")
@@ -98,12 +108,16 @@ def choose_countries(update, context):
         elif question == "Corona / durchschnittliche Tote":
             photos = data_manager.compare_deaths(countries=countries)
 
-        # Reply to user
+        # Send data to user
         text = "Hier sind deine Daten:"
         bot.send_message(chat_id=chat_id, text=text)
-
         for photo in photos:
             bot.send_photo(chat_id=chat_id, photo=photo)
+
+        # Reset user storage
+        context.user_data["question"] = ""
+        context.user_data["category"] = ""
+        context.user_data["countries"] = []
 
         text = "Was willst du wissen?"
         keyboard = const.question_keyboard
@@ -124,17 +138,6 @@ def choose_countries(update, context):
         bot.send_message(chat_id=chat_id, text=text)
 
         return const.States.CHOOSE_COUNTRIES
-
-def cancel(update, context):
-    # Short vars
-    bot = context.bot
-    chat_id = update.effective_user.id
-    text= "Was willst du wissen?"
-    keyboard = const.question_keyboard
-
-    # Reply to user
-    bot.send_message(chat_id=chat_id, text=text2, reply_markup=keyboard)
-    return const.States.CHOOSE_QUESTION
 
 def start(update, context):
     context.user_data["countries"] = []
@@ -162,7 +165,7 @@ def main():
         const.States.CHOOSE_CATEGORY : [telegram.ext.MessageHandler(telegram.ext.Filters.text, choose_category)]
     }
 
-    fallbacks = [telegram.ext.CommandHandler("abbrechen", cancel)]
+    fallbacks = []
     conv = telegram.ext.ConversationHandler(entry_points, states, fallbacks)
     dispatcher.add_handler(conv)
 

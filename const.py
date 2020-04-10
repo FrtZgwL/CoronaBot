@@ -18,7 +18,8 @@ question_keyboard = {
 category_keyboard = {
     "keyboard" : [
         ["Tote", "Infizierte"],
-        ["Geheilte", "Aktive"]
+        ["Geheilte", "Aktive"],
+        ["Zurück"]
     ],
     "resize_keyboard" : True
 }
