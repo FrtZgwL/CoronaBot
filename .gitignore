@@ -131,3 +131,5 @@ dmypy.json
 # application data
 *.pkl
 *.csv
+!populations.csv
+!death_counts.csv
