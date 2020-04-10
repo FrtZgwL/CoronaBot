@@ -1,0 +1,2 @@
+This repository is for an analysis of the data in the John Hopkins Repository.
+It contains a couple Jupyter Notebooks where I conduct a well documented data analysis. The goal of the analysis is to understand the structure of the data at hand. Further I will create notebooks where I will figure out how to best organize the data for the design  of the datamanager.py. Finally I will create the functions in datamanager.py file FrtZgwL has already started.  
