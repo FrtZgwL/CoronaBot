@@ -1,10 +1,55 @@
 
+# Imports
 
-# Check out "file_structure.md" to see where to get the data.
+import const
+import logging
+from os import listdir
+from urllib.request import urlopen
+from shutil import copyfileobj
+from datetime import date
+from datetime import timedelta
+from urllib.error import HTTPError
+
+# !!! Check out "file_structure.md" to see where to get the data. !!!
 
 def update_data():
     """Pulls up to date data into the "data/"-folder."""
-    print("WIP")
+
+    logging.basicConfig(level=logging.INFO)
+
+    # Figure out how much data we have
+    file_names = listdir("data/daily_reports")
+    file_names = sorted(file_names)
+    if (len(file_names) > 0):
+        last_entry = file_names[-1]
+    else:
+        last_entry = const.first_jh_daily_entry
+
+    # Try to get newer files until the server declines 
+    one_day = timedelta(days=1)
+    current_date = date.fromisoformat(last_entry[:-4])
+    current_date += one_day # starting with the entry of the day after the last one we have
+    while(True):
+        url = const.jh_url
+        jh_file_name = "{:02d}-{:02d}-{}.csv".format(
+            current_date.month,
+            current_date.day,
+            current_date.year)
+        url += jh_file_name
+
+        logging.info(f"Pulling from {url}...")
+
+        try:
+            with urlopen(url) as response, open(f"data/daily_reports/{current_date}.csv", "wb") as f:
+                copyfileobj(response, f) # TODO: dahin: 
+        except HTTPError as e:
+            if e.code == 404:
+                print(f"Could not pull from {url}")
+                break
+            else:
+                raise e     
+
+        current_date += one_day
 
 def per_population(**kwargs):
     """Returns a saved image that plots numbers about the corona crisis from different countries relative to their population.

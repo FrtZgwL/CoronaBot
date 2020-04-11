@@ -24,17 +24,17 @@ def choose_question(update, context):
     context.user_data["question"] = choice
 
     # Understand what question was chosen
-    if choice == "Pro 1000 Einwohner":
+    if choice == "Bevölkerung":
         keyboard = const.category_keyboard
         text = "Wähle jetzt eine Kategorie"
         next_state = const.States.CHOOSE_CATEGORY
 
-    elif choice == "Ab 100. Fall":
+    elif choice == "Beginn":
         keyboard = const.category_keyboard
         text = "Wähle jetzt eine Kategorie"
         next_state = const.States.CHOOSE_CATEGORY
 
-    elif choice == "Corona / durchschnittliche Tote":
+    elif choice == "Kuchen":
         keyboard = const.remove_keyboard
         text = "Wähle jetzt Länder, die du vergleichen willst"
         next_state = const.States.CHOOSE_COUNTRIES
@@ -99,13 +99,13 @@ def choose_countries(update, context):
         countries = context.user_data["countries"]
         photos = []
 
-        if question == "Pro 1000 Einwohner":
+        if question == "Bevölkerung":
             photos = [data_manager.per_population(category=category, countries=countries)]
 
-        elif question == "Ab 100. Fall":
+        elif question == "Beginn":
             photos = [data_manager.since_outbreak(category=category, countries=countries)]
 
-        elif question == "Corona / durchschnittliche Tote":
+        elif question == "Kuchen":
             photos = data_manager.compare_deaths(countries=countries)
 
         # Send data to user
@@ -140,10 +140,15 @@ def choose_countries(update, context):
         return const.States.CHOOSE_COUNTRIES
 
 def start(update, context):
+    # Set up user storage
     context.user_data["countries"] = []
 
+    # Short vars
+    chat_id = update.effective_user.id
+    text = const.welcome_message
+
     keyboard = const.question_keyboard
-    context.bot.send_message(chat_id=update.effective_user.id, text="Willkommen! Ich bin der CoronaBot. Klick dich gerne durch meine Menüs.", reply_markup=keyboard)
+    context.bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard, parse_mode="Markdown")
 
     return const.States.CHOOSE_QUESTION
 
@@ -154,7 +159,8 @@ def main():
     # set up updater & dispatcher
     with open("storage/token.pkl", "rb") as f:
         token = pickle.load(f)
-    updater = telegram.ext.Updater(token=token, use_context=True)
+    persistence = telegram.ext.PicklePersistence(filename="storage/bot_storage.pkl") # The states of the ConversationHandler, user_data and bot_data are stored here
+    updater = telegram.ext.Updater(token=token, use_context=True, persistence=persistence)
     dispatcher = updater.dispatcher
 
     # Create ConversationHandler
@@ -164,10 +170,9 @@ def main():
         const.States.CHOOSE_COUNTRIES : [telegram.ext.MessageHandler(telegram.ext.Filters.text, choose_countries)],
         const.States.CHOOSE_CATEGORY : [telegram.ext.MessageHandler(telegram.ext.Filters.text, choose_category)]
     }
-
     fallbacks = []
-    conv = telegram.ext.ConversationHandler(entry_points, states, fallbacks)
-    dispatcher.add_handler(conv)
+    menu_navigation = telegram.ext.ConversationHandler(entry_points, states, fallbacks, persistent=True, name="menu_navigation")
+    dispatcher.add_handler(menu_navigation)
 
     logging.info("Waiting for updates...")
     updater.start_polling()

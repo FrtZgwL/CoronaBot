@@ -8,9 +8,9 @@ class States():
 
 question_keyboard = {
     "keyboard" : [
-        ["Pro 1000 Einwohner"],
-        ["Ab 100. Fall"],
-        ["Corona / durchschnittliche Tote"]
+        ["Bevölkerung"],
+        ["Beginn"],
+        ["Kuchen"]
     ],
     "resize_keyboard" : True
 }
@@ -27,6 +27,24 @@ category_keyboard = {
 remove_keyboard = {
     "remove_keyboard" : True
 }
+
+jh_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/"
+
+first_jh_daily_entry = "2020-01-22.csv"
+
+welcome_message = """Willkommen! Ich bin der CoronaBot.
+
+Ich liefere dir Grafiken, auf denen du den Verlauf der Coronapandemie in verschiednen Ländern vergleichen kannst. Ich zeige dir Informationen über die Corona Toten, Geheilten, Erkrankten und über die aktuell Erkrankten.
+
+Ich kann dir folgende Grafiken anzeigen:
+
+- *Bevölkerung:* Der Verlauf der Krankheit in Relation zu seiner Bevölkerung (pro 100.000 Einwohner).
+- *Beginn:* Der Verlauf der Krankheit pro Tag seit dem Ausbruch (100. Fall)
+- *Kuchen:* Das Verhältnis der an Corona Gestorbenen zu allen Gestorbenen seit Beginn der Pandemie.
+
+_Anmerkung: Für diese Statistik mache ich die Annahmen, dass Corona Tote auch nur an Corona gestorben sind, und, dass seit Beginn der Pandemie genau so viele Menschen gestorben sind, wie im Durchschnitt in den vergangenen Jahren_.
+
+Klick dich gerne durch meine Menüs! 🙂"""
 
 def format_country(emoji):
     country = ""
