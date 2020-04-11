@@ -28,6 +28,10 @@ remove_keyboard = {
     "remove_keyboard" : True
 }
 
+jh_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/"
+
+first_jh_daily_entry = "2020-01-22.csv"
+
 welcome_message = """Willkommen! Ich bin der CoronaBot.
 
 Ich liefere dir Grafiken, auf denen du den Verlauf der Coronapandemie in verschiednen Ländern vergleichen kannst. Ich zeige dir Informationen über die Corona Toten, Geheilten, Erkrankten und über die aktuell Erkrankten.
