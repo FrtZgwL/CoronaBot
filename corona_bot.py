@@ -159,7 +159,8 @@ def main():
     # set up updater & dispatcher
     with open("storage/token.pkl", "rb") as f:
         token = pickle.load(f)
-    updater = telegram.ext.Updater(token=token, use_context=True)
+    persistence = telegram.ext.PicklePersistence(filename="storage/bot_storage.pkl") # The states of the ConversationHandler, user_data and bot_data are stored here
+    updater = telegram.ext.Updater(token=token, use_context=True, persistence=persistence)
     dispatcher = updater.dispatcher
 
     # Create ConversationHandler
@@ -169,10 +170,9 @@ def main():
         const.States.CHOOSE_COUNTRIES : [telegram.ext.MessageHandler(telegram.ext.Filters.text, choose_countries)],
         const.States.CHOOSE_CATEGORY : [telegram.ext.MessageHandler(telegram.ext.Filters.text, choose_category)]
     }
-
     fallbacks = []
-    conv = telegram.ext.ConversationHandler(entry_points, states, fallbacks)
-    dispatcher.add_handler(conv)
+    menu_navigation = telegram.ext.ConversationHandler(entry_points, states, fallbacks, persistent=True, name="menu_navigation")
+    dispatcher.add_handler(menu_navigation)
 
     logging.info("Waiting for updates...")
     updater.start_polling()
