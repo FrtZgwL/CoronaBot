@@ -9,6 +9,8 @@ from shutil import copyfileobj
 from datetime import date
 from datetime import timedelta
 from urllib.error import HTTPError
+from datetime import date
+from pickle import dump
 
 # !!! Check out "file_structure.md" to see where to get the data. !!!
 
@@ -50,6 +52,11 @@ def update_data():
                 raise e     
 
         current_date += one_day
+
+    # Save today as last update
+    last_update = date.today()
+    with open("storage/last_update.pkl", "wb") as f:
+        dump(last_update, f)
 
 def per_population(**kwargs):
     """Returns a saved image that plots numbers about the corona crisis from different countries relative to their population.

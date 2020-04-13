@@ -109,8 +109,17 @@ def choose_countries(update, context):
             photos = data_manager.compare_deaths(countries=countries)
 
         # Send data to user
-        text = "Hier sind deine Daten:"
-        bot.send_message(chat_id=chat_id, text=text)
+            # Construct last_update string
+        try:
+            with open("storage/last_update.pkl", "rb") as f:
+                last_update = pickle.load(f)
+            last_update_str = f"{last_update.day}.{last_update.month}.{last_update.year}"
+        except FileNotFoundError as e:
+            last_update_str = "Noch keine Updates"
+        
+
+        text = f"Hier sind deine Daten:\n_(letztes Update am {last_update_str})_"
+        bot.send_message(chat_id=chat_id, text=text, parse_mode="Markdown")
         for photo in photos:
             bot.send_photo(chat_id=chat_id, photo=photo)
 
