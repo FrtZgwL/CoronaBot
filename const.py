@@ -14,6 +14,15 @@ question_keyboard = {
     ],
     "resize_keyboard" : True
 }
+contries_keyboard = {
+    "keyboard" : [
+        ["🇫🇷", "🇮🇹", "🇬🇧", "🇦🇹", "🇩🇪"],
+        ["🇪🇸","🇬🇷","🇨🇭", "🇮🇳","🇹🇷"],
+        ["🇨🇲", "🇮🇷", "🇺🇸", "🇨🇳", "🏳️‍🌈"],
+        ["Zurück", "Andere", "Bestätigen"]
+    ],
+    "resize_keyboard" : True
+}
 
 category_keyboard = {
     "keyboard" : [
@@ -51,6 +60,9 @@ def format_country(emoji):
 
     if emoji == "🇦🇨":
         country = "Ascension Island"
+
+    if emoji == "🏳️‍🌈":
+        country = "World"
 
     if emoji == "🇦🇩":
         country = "Andorra"
@@ -267,9 +279,6 @@ def format_country(emoji):
 
     if emoji == "🇪🇹":
         country = "Ethiopia"
-
-    if emoji == "🇪🇺":
-        country = "European Union"
 
     if emoji == "🇫🇮":
         country = "Finland"
