@@ -35,7 +35,7 @@ def choose_question(update, context):
         next_state = const.States.CHOOSE_CATEGORY
 
     elif choice == "Kuchen":
-        keyboard = const.remove_keyboard
+        keyboard = const.contries_keyboard
         text = "Wähle jetzt Länder, die du vergleichen willst"
         next_state = const.States.CHOOSE_COUNTRIES
 
@@ -68,7 +68,7 @@ def choose_category(update, context):
         context.user_data["category"] = choice
 
         # Reply to user
-        keyboard = const.remove_keyboard
+        keyboard = const.contries_keyboard
         text = "Wähle jetzt Länder, die du vergleichen willst"
         bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard)
 
@@ -131,7 +131,7 @@ def choose_countries(update, context):
         text = "Was willst du wissen?"
         keyboard = const.question_keyboard
         bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard)
-        
+
         return const.States.CHOOSE_QUESTION
 
     elif country != "":
