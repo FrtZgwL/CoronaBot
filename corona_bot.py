@@ -79,7 +79,11 @@ def choose_countries(update, context):
     bot = context.bot
     chat_id = update.effective_user.id
     choice = update.message.text
-    country = const.format_country(choice)
+    try:
+        country = const.emoji_to_country[choice]
+    except KeyError:
+        country = ""
+    
 
     if choice == "Zurück":
         text = "Was willst du wissen?"
