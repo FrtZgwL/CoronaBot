@@ -1,6 +1,7 @@
 
 # Imports
 
+import pandas as pd
 import const
 import logging
 from os import listdir
@@ -19,39 +20,32 @@ def update_data():
 
     logging.basicConfig(level=logging.INFO)
 
-    # Figure out how much data we have
-    file_names = listdir("data/daily_reports")
-    file_names = sorted(file_names)
-    if (len(file_names) > 0):
-        last_entry = file_names[-1]
-    else:
-        last_entry = const.first_jh_daily_entry
+    
+    links = {
+        "time_series" : "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv",
+        "deaths" : "https://github.com/CSSEGISandData/COVID-19/raw/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv",
+        "recovered" : "https://github.com/CSSEGISandData/COVID-19/raw/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv"
+    }
 
-    # Try to get newer files until the server declines 
-    one_day = timedelta(days=1)
-    current_date = date.fromisoformat(last_entry[:-4])
-    current_date += one_day # starting with the entry of the day after the last one we have
-    while(True):
-        url = const.jh_url
-        jh_file_name = "{:02d}-{:02d}-{}.csv".format(
-            current_date.month,
-            current_date.day,
-            current_date.year)
-        url += jh_file_name
+    for link in links:
+        logging.info(f"Pulling {link} from {links[link]}...")
 
-        logging.info(f"Pulling from {url}...")
+        # Pull from jh server
+        with urlopen(links[link]) as response, open(f"data/{link}.csv", "wb") as f:
+            copyfileobj(response, f)
 
-        try:
-            with urlopen(url) as response, open(f"data/daily_reports/{current_date}.csv", "wb") as f:
-                copyfileobj(response, f) # TODO: dahin: 
-        except HTTPError as e:
-            if e.code == 404:
-                print(f"Could not pull from {url}")
-                break
-            else:
-                raise e     
+        # Store as pd df
+        with open(f"data/{link}.csv", "rb") as f:
+            df = pd.read_csv(f)
+        
+        df = df.drop(['Province/State', 'Lat', 'Long'], axis=1)
+        df = df.reset_index().groupby("Country/Region").sum().drop(['index'], axis=1)
 
-        current_date += one_day
+        with open(f"storage/{link}.pkl", "wb") as f:
+            dump(df, f)
+        logging.info(f"Storing {link}...")
+
+        print(df.head())
 
     # Save today as last update
     last_update = date.today()
