@@ -22,7 +22,7 @@ def update_data():
 
     
     links = {
-        "time_series" : "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv",
+        "confirmed" : "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv",
         "deaths" : "https://github.com/CSSEGISandData/COVID-19/raw/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv",
         "recovered" : "https://github.com/CSSEGISandData/COVID-19/raw/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv"
     }
@@ -39,13 +39,13 @@ def update_data():
             df = pd.read_csv(f)
         
         df = df.drop(['Province/State', 'Lat', 'Long'], axis=1)
-        df = df.reset_index().groupby("Country/Region").sum().drop(['index'], axis=1)
+        # df = df.reset_index().groupby("Country/Region").sum().drop(['index'], axis=1)
 
-        with open(f"storage/{link}.pkl", "wb") as f:
+        with open(f"storage/{link}_df.pkl", "wb") as f:
             dump(df, f)
         logging.info(f"Storing {link}...")
 
-        print(df.head())
+        print(df)
 
     # Save today as last update
     last_update = date.today()
