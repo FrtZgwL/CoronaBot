@@ -83,7 +83,7 @@ Curacao;8.40
 Aruba;8.40
 Switzerland;8.30
 Grenada;8.20
-United States;8.20
+US;8.20
 Palau;8.10
 Norway;8.10
 Kazakhstan;8.10
@@ -111,7 +111,7 @@ Cambodia;7.50
 Argentina;7.50
 New Zealand;7.50
 Guyana;7.40
-Taiwan;7.40
+Taiwan*;7.40
 Burma;7.40
 Laos;7.40
 Liechtenstein;7.40
@@ -123,7 +123,7 @@ Saint Vincent and the Grenadines;7.30
 Sudan;7.30
 Luxembourg;7.30
 Comoros;7.20
-Bahamas, The;7.20
+Bahamas;7.20
 Eritrea;7.20
 Mauritius;7.10
 Azerbaijan;7.10
@@ -131,7 +131,7 @@ Saint Kitts and Nevis;7.10
 Kiribati;7.00
 Ghana;7.00
 Seychelles;7.00
-Gambia, The;7.00
+Gambia;7.00
 Togo;6.90
 Jamaica;6.80
 Albania;6.80
