@@ -40,10 +40,14 @@ def update_data():
         # Store as pd df
         with open(f"data/{link}.csv", "rb") as f:
             df = pd.read_csv(f)
-        
-        df = df.drop(['Province/State', 'Lat', 'Long'], axis=1)
-        # df = df.reset_index().groupby("Country/Region").sum().drop(['index'], axis=1)
 
+        # Remove uneccecary columns
+        df = df.drop(['Province/State', 'Lat', 'Long'], axis=1)
+
+        # Aggregating all rows with the same country name
+        df = df.groupby("Country/Region").sum()
+
+        # Store
         with open(f"storage/{link}_df.pkl", "wb") as f:
             dump(df, f)
         logging.info(f"Storing {link}...")
@@ -62,7 +66,7 @@ def update_data():
 def per_population(**kwargs):
     """Returns a saved image that plots numbers about the corona crisis from different countries relative to their population.
 
-    Keyword arguments: 
+    Keyword arguments:
     category -- "dead", "cured", "infected" or "active".
     countries -- List with country names. For example ["Germany", "Italy", "USA"]
     """
@@ -72,7 +76,7 @@ def per_population(**kwargs):
 def since_outbreak(**kwargs):
     """Returns a saved image that plots numbers about the corona crisis from different countries per day since the day they reached 100 cases.
 
-    Keyword arguments: 
+    Keyword arguments:
     category -- "dead", "cured", "infected" or "active".
     countries -- List with country names. For example ["Germany", "Italy", "USA"]
     """
@@ -80,7 +84,7 @@ def since_outbreak(**kwargs):
     return(open("isaac-smith-6EnTPvPPL6I-unsplash.jpg", "rb"))
 
 def compare_deaths(**kwargs):
-    """Returns a list of saved images that show a cake-diagram that compares corona deaths with all other deaths. 
+    """Returns a list of saved images that show a cake-diagram that compares corona deaths with all other deaths.
 
     We assume that an average amount of people died since the first corona cases. (to compute this see "data/death_counts.csv") We assume that all people that are listed under corona-deaths would not have died otherwise. So we conclude that the total amount of deaths since the first corona cases is the average amount of deaths + the deaths from corona. This function shows how much of the total amount of deaths since the first corona cases are deaths from corona.
 
