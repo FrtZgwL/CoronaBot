@@ -4,13 +4,15 @@
 import pandas as pd
 import const
 import logging
+import schedule
+import time
 from os import listdir
 from urllib.request import urlopen
 from shutil import copyfileobj
 from datetime import date
 from datetime import timedelta
+from datetime import datetime
 from urllib.error import HTTPError
-from datetime import date
 from pickle import dump
 
 # !!! Check out "file_structure.md" to see where to get the data. !!!
@@ -19,6 +21,7 @@ def update_data():
     """Pulls up to date data into the "data/"-folder."""
 
     logging.basicConfig(level=logging.INFO)
+    logging.info(f"{datetime.now()}, Starting to pull data...")
 
     # get confirmed, deaths and recovered from jh
     links = {
@@ -49,6 +52,7 @@ def update_data():
 
     # calculate active: active = confirmed - recovered - deaths
     
+    logging.info("Done pulling data from jh")
 
     # Save today as last update
     last_update = date.today()
@@ -89,4 +93,16 @@ def compare_deaths(**kwargs):
         photos.append(open("isaac-smith-6EnTPvPPL6I-unsplash.jpg", "rb"))
     return(photos)
 
+def main():
+    logging.basicConfig(level=logging.INFO)
 
+    # Update data daily
+    schedule.every().day.at("18:09").do(update_data)
+    logging.info("Data Updater running...")
+
+    while True:
+        schedule.run_pending()
+        time.sleep(10)
+
+if __name__ == '__main__':
+    main()
