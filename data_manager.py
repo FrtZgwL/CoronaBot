@@ -20,7 +20,7 @@ def update_data():
 
     logging.basicConfig(level=logging.INFO)
 
-    
+    # get confirmed, deaths and recovered from jh
     links = {
         "confirmed" : "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv",
         "deaths" : "https://github.com/CSSEGISandData/COVID-19/raw/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv",
@@ -46,6 +46,9 @@ def update_data():
         logging.info(f"Storing {link}...")
 
         print(df)
+
+    # calculate active: active = confirmed - recovered - deaths
+    
 
     # Save today as last update
     last_update = date.today()
