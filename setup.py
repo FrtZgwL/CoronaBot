@@ -13,10 +13,10 @@ def main():
         with open("storage/token.pkl", "wb") as f:
             pickle.dump(token, f)
 
-        print("Token erfolgreich gespeichert.")
+        print("Stored token successfully.")
 
     except InvalidToken:
-        print("Ungültiges Token.")
+        print("Invalid token.")
 
 
 if __name__ == "__main__":
