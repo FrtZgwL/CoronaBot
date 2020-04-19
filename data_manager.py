@@ -6,16 +6,25 @@ import const
 import logging
 import schedule
 import time
+import matplotlib.pyplot as plt
+from matplotlib import dates as mpl_dates
 from os import listdir
 from urllib.request import urlopen
 from shutil import copyfileobj
-from datetime import date
-from datetime import timedelta
-from datetime import datetime
+from datetime import date, timedelta, datetime
 from urllib.error import HTTPError
-from pickle import dump
+from pickle import dump, load
 
 # !!! Check out "file_structure.md" to see where to get the data. !!!
+
+def pickle_this(pickle_object, pickle_object_path):
+    with open(pickle_object_path, "wb") as f:
+        dump(pickle_object, f)
+
+def unpickle_this(pickle_object_path):
+    with open(pickle_object_path, "rb") as f:
+        object = load(pickle_object_path)
+        return(object)
 
 def update_data():
     """Pulls up to date data into the "data/"-folder."""
@@ -38,8 +47,9 @@ def update_data():
             copyfileobj(response, f)
 
         # Store as pd df
-        with open(f"data/{link}.csv", "rb") as f:
-            df = pd.read_csv(f)
+        df = unpickle_this(f"data/{link}.csv")
+        #with open(f"data/{link}.csv", "rb") as f:
+        #    df = pd.read_csv(f)
 
         # Remove uneccecary columns
         df = df.drop(['Province/State', 'Lat', 'Long'], axis=1)
@@ -48,14 +58,38 @@ def update_data():
         df = df.groupby("Country/Region").sum()
 
         # Store
-        with open(f"storage/{link}_df.pkl", "wb") as f:
-            dump(df, f)
+        pickle_this(df, f"storage/{link}_df.pkl")
+        # with open(f"storage/{link}_df.pkl", "wb") as f:
+        #    dump(df, f)
+
         logging.info(f"Storing {link}...")
 
         print(df)
 
-    # calculate active: active = confirmed - recovered - deaths
-    
+    # Open dfs for creating the active cases df
+    confirmed_df = unpickle_this(f"storage/confirmed.pkl")
+    deaths_df = unpickle_this(f"storage/deaths.pkl")
+    recovered_df = unpickle_this(f"storage/recovered.pkl")
+
+
+    # Calculate active: active = confirmed - recovered - deaths
+    # The ".value" attribute returns an nd-array(n-dimensional) of the values in the data frame.
+    active_nd = confirmed_df.values - deaths_df.values - recovered_df.values
+
+    # Copying column and index names from another df for turning
+    # the  active cases nd-array into a pandas data frame
+
+    countries = confirmed_df.index
+    dates = confirmed_df.columns
+
+    active_df = pd.DataFrame(active_nd, index = countries, columns = dates)
+
+    #store
+    pickle_this(active_df,f"storage/active_df.pkl")
+
+
+    logging.info(f"Storing {link}...")
+
     logging.info("Done pulling data from jh")
 
     # Save today as last update
@@ -63,11 +97,11 @@ def update_data():
     with open("storage/last_update.pkl", "wb") as f:
         dump(last_update, f)
 
-def per_population(**kwargs):
+def per_population(category, countries):
     """Returns a saved image that plots numbers about the corona crisis from different countries relative to their population.
 
     Keyword arguments:
-    category -- "dead", "cured", "infected" or "active".
+    category -- "dead", "cured", "infected" or "active". // rename DEATHS
     countries -- List with country names. For example ["Germany", "Italy", "USA"]
     """
     print(kwargs)
