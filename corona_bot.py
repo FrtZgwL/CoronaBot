@@ -65,9 +65,9 @@ def choose_category(update, context):
         return const.States.CHOOSE_QUESTION
     else:
         # Store choice
-        context.user_data["category"] = choice
+        context.user_data["category"] = const.translate_category[choice]
 
-        # Reply to user
+  # Reply to user
         keyboard = const.contries_keyboard
         text = "Wähle jetzt Länder, die du vergleichen willst"
         bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard)
@@ -75,6 +75,8 @@ def choose_category(update, context):
         return const.States.CHOOSE_COUNTRIES
 
 def choose_countries(update, context):
+    logging.basicConfig(leve=logging.INFO)
+
     # Short vars
     bot = context.bot
     chat_id = update.effective_user.id
@@ -96,12 +98,16 @@ def choose_countries(update, context):
         print("WIP")
 
     elif choice == "Bestätigen":
-        # Send data
         question = context.user_data["question"]
+
+        # Send data
         if "category" in context.user_data:
             category = context.user_data["category"]
+
         countries = context.user_data["countries"]
         photos = []
+
+        logging.info(f"Sending graph for question:{question}; category:{category}; countries:{countries}.")
 
         if question == "Bevölkerung":
             photos = [data_manager.per_population(category=category, countries=countries)]

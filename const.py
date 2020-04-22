@@ -37,6 +37,13 @@ remove_keyboard = {
     "remove_keyboard" : True
 }
 
+translate_category = {
+    "Tote" : "deaths",
+    "Infizierte" : "infected",
+    "Geheilte" : "cured",
+    "Aktive" : "active"
+}
+
 jh_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/"
 
 first_jh_daily_entry = "2020-01-22.csv"

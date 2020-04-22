@@ -26,7 +26,7 @@ def pickle_this(pickle_object, pickle_object_path):
 
 def unpickle_this(pickle_object_path):
     with open(pickle_object_path, "rb") as f:
-        object = load(pickle_object_path)
+        object = load(f)
         return(object)
 
 def update_data():
@@ -114,13 +114,14 @@ def update_data():
     with open("storage/last_update.pkl", "wb") as f:
         dump(last_update, f)
 
-def filter_countries_in_country_list(DataFrame, country_list):
-    df = DataFrame.loc[country_list]
+def filter_countries_in_country_list(df, country_list):
+    df = df.loc[country_list]
+
     return(df)
 
 def plot_title(category, country_list):
     category_title_names = {
-        "dead" : "Deaths",
+        "deaths" : "Deaths",
         "active" : "Active cases",
         "infected" : "Infected",
         "cured": "Cured cases"
@@ -143,16 +144,23 @@ def plot_title(category, country_list):
     return(Title)
 
 
-def per_population(): # define formatulation(category, country_list):
+def per_population(**kwargs): # define formatulation(category, country_list):
     """Returns a df saved image that plots numbers about the corona crisis from different countries relative to their population.
 
     Keyword arguments:
-    category -- "dead", "cured", "infected" or "active". // rename DEATHS
+    category -- "deaths", "cured", "infected" or "active". // rename DEATHS
     countries -- List with country names. For example ["Germany", "Italy", "USA"]
     """
+    logging.basicConfig(level=logging.DEBUG)
 
-    df = f"storage/{category}_per_population_df.pkl"
-    df = filter_countries_in_country_list(df)
+    country_list = kwargs["countries"]
+    category = kwargs["category"]
+
+    logging.info(f"kwargs: {kwargs}")
+
+    df = unpickle_this(f"storage/{category}_df.pkl")
+
+    df = filter_countries_in_country_list(df, country_list)
 
     # Tanspose aka pivot
     df = df.T
@@ -164,9 +172,9 @@ def per_population(): # define formatulation(category, country_list):
     x_values = pd.to_datetime(df.index) # List of dates
 
     # Adding the graphs for countries in country_list to the plot
-    for i in df.columns: # Selected countries
+    for country in df.columns: # Selected countries
         # Converting the column name into a list. Prequisit for .plot()  ## not entirely sure...
-        y_values = df[i].tolist()
+        y_values = df[country].tolist()
         plt.plot(x_values,y_values)
 
     #Format the date to something like: Apr,02 2042
@@ -177,16 +185,16 @@ def per_population(): # define formatulation(category, country_list):
         # Rotate the dates
     plt.gcf().autofmt_xdate()
 
-    Title = plot_title(category, country_list)
-    plt.title(Title)
-    plt.savefig("Plot.png") ### bin mir nicht sicher ob das hier sein kann oder in die Funktionen unten rein muss
-    return(open("Plot.png", "rb"))
+    title = plot_title(category, country_list)
+    plt.title(title)
+    plt.savefig("plot.png") ### bin mir nicht sicher ob das hier sein kann oder in die Funktionen unten rein muss
+    return(open("plot.png", "rb"))
 
 def since_outbreak(**kwargs):
     """Returns a saved image that plots numbers about the corona crisis from different countries per day since the day they reached 100 cases.
 
     Keyword arguments:
-    category -- "dead", "cured", "infected" or "active".
+    category -- "deaths", "cured", "infected" or "active".
     countries -- List with country names. For example ["Germany", "Italy", "USA"]
     """
 
@@ -235,7 +243,7 @@ def compare_deaths(country_list):
         labels = country_list
         sizes = [normal_deaths, corona_deaths]
         colors = ['blue', 'green']
-        patches, texts = plt.pie(sizes, colors=colors, shadow=True, startangle=90) // what are these texts?
+        patches, texts = plt.pie(sizes, colors=colors, shadow=True, startangle=90) # what are these texts?
         plt.legend(patches, labels, loc="best")
         plt.show()
 
