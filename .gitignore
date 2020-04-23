@@ -133,3 +133,5 @@ dmypy.json
 *.csv
 !populations.csv
 !death_rates.csv
+!deaths_df.pkl
+!populations_df.pkl
