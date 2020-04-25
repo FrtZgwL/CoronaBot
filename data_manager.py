@@ -101,7 +101,7 @@ def update_data():
 
     active_df = pd.DataFrame(active_nd, index = countries, columns = dates)
 
-    #store
+    #storenp.core.defchararray.add
     pickle_this(active_df,f"storage/active_df.pkl")
 
 
@@ -115,6 +115,9 @@ def update_data():
         dump(last_update, f)
 
 def filter_countries_in_country_list(df, country_list):
+    """Creates a new df with by extracting the rows of the original
+    dataframe, that contain the passed country names """
+
     df = df.loc[country_list]
 
     return(df)
@@ -127,7 +130,7 @@ def plot_title(category, country_list):
         "cured": "Cured cases"
     }
     # Defining the first words of the title
-    for category_name, category_title_name in category_title_names:
+    for category_name, category_title_name in category_title_names.items():
         if category_name == category:
             Title_beginning = category_title_name
 
