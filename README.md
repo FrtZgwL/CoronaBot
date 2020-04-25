@@ -45,6 +45,6 @@ Congratiulations! Your CoronaBot is ready to go. Just text the bot you created w
 
 # Where does the data come from?
 
-We are retreiving our corona-data from a git-hub repositoy of the [John Hopkins universety](https://github.com/CSSEGISandData/COVID-19/) We get country populations from [worldometers](www.Worldometers.info).
+We are retreiving our corona-data from a git-hub repositoy of the [John Hopkins universety](https://github.com/CSSEGISandData/COVID-19/) We get country populations from [worldometers](www.Worldometers.info). The deathrate data is from the [CIA World Factbook](https://www.cia.gov/library/publications/the-world-factbook/rankorder/2066rank.html).
 
 
