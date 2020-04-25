@@ -101,7 +101,7 @@ def update_data():
 
     active_df = pd.DataFrame(active_nd, index = countries, columns = dates)
 
-    #store
+    #storenp.core.defchararray.add
     pickle_this(active_df,f"storage/active_df.pkl")
 
 
@@ -123,13 +123,13 @@ def filter_countries_in_country_list(DataFrame, country_list):
 
 def plot_title(category, country_list):
     category_title_names = {
-        "dead" : "Deaths",
+        "deadths" : "Deaths",
         "active" : "Active cases",
         "infected" : "Infected",
         "cured": "Cured cases"
     }
     # Defining the first words of the title
-    for category_name, category_title_name in category_title_names:
+    for category_name, category_title_name in category_title_names.items():
         if category_name == category:
             Title_beginning = category_title_name
 
@@ -167,9 +167,9 @@ def per_population(): # define formatulation(category, country_list):
     x_values = pd.to_datetime(df.index) # List of dates
 
     # Adding the graphs for countries in country_list to the plot
-    for i in df.columns: # Selected countries
+    for country in df.columns: # Selected countries
         # Converting the column name into a list. Prequisit for .plot()  ## not entirely sure...
-        y_values = df[i].tolist()
+        y_values = df[country].tolist()
         plt.plot(x_values,y_values)
 
     #Format the date to something like: Apr,02 2042
