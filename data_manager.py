@@ -115,6 +115,9 @@ def update_data():
         dump(last_update, f)
 
 def filter_countries_in_country_list(DataFrame, country_list):
+    """Creates a new df with by extracting the rows of the original
+    dataframe, that contain the passed country names """
+
     df = DataFrame.loc[country_list]
     return(df)
 
