@@ -1,9 +1,12 @@
 
 import pickle
+from data_manager import update_data
 from telegram import Bot
 from telegram.error import InvalidToken
 
 def main():
+    update_data()
+
     print("Please input your bot token:")
     token = input()
 
