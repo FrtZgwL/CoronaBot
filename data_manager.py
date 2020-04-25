@@ -45,6 +45,8 @@ def update_data():
     for link in links:
         logging.info(f"Pulling {link} from {links[link]}...")
 
+        # --- create regular time_series df's --- #
+
         # Pull from jh server
         with urlopen(links[link]) as response, open(f"data/{link}.csv", "wb") as f:
             copyfileobj(response, f)
@@ -59,35 +61,30 @@ def update_data():
         # Aggregating all rows with the same country name
         df = df.groupby("Country/Region").sum()
 
+        # store it
+        logging.info(f"Storing {link}...")
+        pickle_this(df, f"storage/{link}_df.pkl")
+
+
+        # --- create per_population time series df's --- #
+
         # Creating the DataFrame with values per 100.000 citizens
         with open(f"data/populations.csv", "rb") as f:
             populations = pd.read_csv(f)
-
-        # Store
-        pickle_this(df, f"storage/{link}_df.pkl")
-        # with open(f"storage/{link}_df.pkl", "wb") as f:   ### Bin mir nicht sicher, ob das funktioniert
-        #    dump(df, f) ### Bin mir nicht sicher, ob das funktioniert
 
         # Get the data frame with all values in relation to their population size
         # Formula = df_values / population count * 100.000
         df_per_population = np.divide(df.values.T, populations).T  # df_values / population
         df_per_population = df_per_population*100000
+
+        # Store it
         pickle_this(df, f"storage/{link}_per_population_df.pkl")
-                # Store
-        pickle_this(df, f"storage/{link}_df.pkl")
-        # with open(f"storage/{link}_df.pkl", "wb") as f:
-        #    dump(df, f)
 
-
-        logging.info(f"Storing {link}...")
-
-        print(df)
 
     # Open dfs for creating the active cases df
     confirmed_df = unpickle_this(f"storage/confirmed.pkl")
     deaths_df = unpickle_this(f"storage/deaths.pkl")
     recovered_df = unpickle_this(f"storage/recovered.pkl")
-
 
     # Calculate active: active = confirmed - recovered - deaths
     # The ".value" attribute returns an nd-array(n-dimensional) of the values in the data frame.
@@ -215,7 +212,6 @@ def compare_deaths(country_list):
     countries -- List with country names. For example ["Germany", "Italy", "USA"]
     death_rates -- df with death rates for all countries
     """
-
 
     df = unpickle_this(f"storage/deaths.pkl")
     df = filter_countries_in_country_list(df, country_list)
