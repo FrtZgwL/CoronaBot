@@ -66,43 +66,45 @@ def update_data():
         pickle_this(df, f"storage/{link}_df.pkl")
 
 
-        # --- create per_population time series df's --- #
+        # --- Create per population time series df's --- # ==> TODO: This is BROKEN!
 
-        # Creating the DataFrame with values per 100.000 citizens
-        with open(f"data/populations.csv", "rb") as f:
-            populations = pd.read_csv(f)
+        # # Creating the DataFrame with values per 100.000 citizens
+        # with open(f"data/populations.csv", "rb") as f:
+        #     populations = pd.read_csv(f)
 
-        # Get the data frame with all values in relation to their population size
-        # Formula = df_values / population count * 100.000
-        df_per_population = np.divide(df.values.T, populations).T  # df_values / population
-        df_per_population = df_per_population*100000
+        # # Get the data frame with all values in relation to their population size
+        # # Formula = df_values / population count * 100.000
+        # df_per_population = np.divide(df.values.T, populations).T  # df_values / population
+        # df_per_population = df_per_population*100000
 
-        # Store it
-        pickle_this(df, f"storage/{link}_per_population_df.pkl")
-
-
-    # Open dfs for creating the active cases df
-    confirmed_df = unpickle_this(f"storage/confirmed.pkl")
-    deaths_df = unpickle_this(f"storage/deaths.pkl")
-    recovered_df = unpickle_this(f"storage/recovered.pkl")
-
-    # Calculate active: active = confirmed - recovered - deaths
-    # The ".value" attribute returns an nd-array(n-dimensional) of the values in the data frame.
-    active_nd = confirmed_df.values - deaths_df.values - recovered_df.values
-
-    # Copying column and index names from another df for turning
-    # the  active cases nd-array into a pandas data frame
-
-    countries = confirmed_df.index
-    dates = confirmed_df.columns
-
-    active_df = pd.DataFrame(active_nd, index = countries, columns = dates)
-
-    #storenp.core.defchararray.add
-    pickle_this(active_df,f"storage/active_df.pkl")
+        # # Store it
+        # pickle_this(df, f"storage/{link}_per_population_df.pkl")
 
 
-    logging.info(f"Storing {link}...")
+    # --- Create Active Cases DataFrame --- # ==> TOTO: This is BROKEN
+
+    # # Open dfs for creating the active cases df
+    # confirmed_df = unpickle_this(f"storage/confirmed.pkl")
+    # deaths_df = unpickle_this(f"storage/deaths.pkl")
+    # recovered_df = unpickle_this(f"storage/recovered.pkl")
+
+    # # Calculate active: active = confirmed - recovered - deaths
+    # # The ".value" attribute returns an nd-array(n-dimensional) of the values in the data frame.
+    # active_nd = confirmed_df.values - deaths_df.values - recovered_df.values
+
+    # # Copying column and index names from another df for turning
+    # # the  active cases nd-array into a pandas data frame
+
+    # countries = confirmed_df.index
+    # dates = confirmed_df.columns
+
+    # active_df = pd.DataFrame(active_nd, index = countries, columns = dates)
+
+    # #storenp.core.defchararray.add
+    # pickle_this(active_df,f"storage/active_df.pkl")
+
+
+    # logging.info(f"Storing {link}...")
 
     logging.info("Done pulling data from jh")
 
