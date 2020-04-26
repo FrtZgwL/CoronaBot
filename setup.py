@@ -5,7 +5,17 @@ from telegram import Bot
 from telegram.error import InvalidToken
 
 def main():
+    # --- Get up to date data for the first time --- #
+
     update_data()
+
+
+    # --- Create clean populations- and deathrate DataFrames --- #
+
+    
+
+
+    # --- Get Bot Token from user --- #
 
     print("Please input your bot token:")
     token = input()
@@ -20,6 +30,8 @@ def main():
 
     except InvalidToken:
         print("Invalid token.")
+
+
 
 
 if __name__ == "__main__":
