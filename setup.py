@@ -5,6 +5,7 @@ from telegram import Bot
 from telegram.error import InvalidToken
 
 def main():
+    # TODO: Das später unter user Input
     # --- Get up to date data for the first time --- #
 
     update_data()
