@@ -109,6 +109,11 @@ def choose_countries(update, context):
 
         logging.info(f"Sending graph for question:{question}; category:{category}; countries:{countries}.")
 
+        # TODO: Move this down when function is fixed: Reset user storage
+        context.user_data["question"] = ""
+        context.user_data["category"] = ""
+        context.user_data["countries"] = []
+
         if question == "Bevölkerung":
             photos = [data_manager.per_population(category=category, countries=countries)]
 
@@ -132,11 +137,6 @@ def choose_countries(update, context):
         bot.send_message(chat_id=chat_id, text=text, parse_mode="Markdown")
         for photo in photos:
             bot.send_photo(chat_id=chat_id, photo=photo)
-
-        # Reset user storage
-        context.user_data["question"] = ""
-        context.user_data["category"] = ""
-        context.user_data["countries"] = []
 
         text = "Was willst du wissen?"
         keyboard = const.question_keyboard
