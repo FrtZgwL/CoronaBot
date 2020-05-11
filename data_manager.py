@@ -66,25 +66,25 @@ def update_data():
         pickle_this(df, f"storage/{link}_df.pkl")
 
 
-        # --- Create per population time series df's --- # ==> TODO: This is BROKEN!
+        #--- Create per population time series df's --- # ==> TODO: This is BROKEN!
 
-        # # Creating the DataFrame with values per 100.000 citizens
-        # with open(f"data/populations.csv", "rb") as f:
-        #     populations = pd.read_csv(f)
+        # Creating the DataFrame with values per 100.000 citizens
+        with open(f"data/populations.csv", "rb") as f:
+            populations = pd.read_csv(f)
 
-        # # Get the data frame with all values in relation to their population size
-        # # Formula = df_values / population count * 100.000
-        # df_per_population = np.divide(df.values.T, populations).T  # df_values / population
-        # df_per_population = df_per_population*100000
+        # Get the data frame with all values in relation to their population size
+        # Formula = df_values / population count * 100.000
+        df_per_population = np.divide(df.values.T, populations).T  # df_values / population
+        df_per_population = df_per_population*100000
 
-        # # Store it
-        # pickle_this(df, f"storage/{link}_per_population_df.pkl")
+        # Store it
+        pickle_this(df, f"storage/{link}_per_population_df.pkl")
 
 
     # --- Create Active Cases DataFrame --- # ==> TOTO: This is BROKEN
 
-    # # Open dfs for creating the active cases df
-    # confirmed_df = unpickle_this(f"storage/confirmed.pkl")
+    # Open dfs for creating the active cases df
+    #confirmed_df = unpickle_this(f"storage/confirmed.pkl")
     # deaths_df = unpickle_this(f"storage/deaths.pkl")
     # recovered_df = unpickle_this(f"storage/recovered.pkl")
 
@@ -133,7 +133,7 @@ def plot_title(category, country_list):
         if category_name == category:
             Title_beginning = category_title_name
 
-    Title= Title_beginning+' for countries: \n'
+    Title = Title_beginning + ' for countries: \n'
 
     # Adding countries shown in plot to title
     for i in range(len(country_list)):
@@ -176,8 +176,9 @@ def per_population(**kwargs): # define formatulation(category, country_list):
     # Adding the graphs for countries in country_list to the plot
     for country in df.columns: # Selected countries
         # Converting the column name into a list. Prequisit for .plot()  ## not entirely sure...
-        y_values = df[country].tolist()
-        plt.plot(x_values,y_values)
+        y_values = df[country[0]].tolist()
+        plt.plot(x_values,y_values, label = country[0])
+        plt.legend()
 
     #Format the date to something like: Apr,02 2042
         # Define format
